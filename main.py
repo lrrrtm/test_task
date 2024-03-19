@@ -1,4 +1,5 @@
 import json
+import sys
 
 from psycopg2 import extras
 import psycopg2 as pg
@@ -71,10 +72,10 @@ def print_shelfs(dict):
             # print("\n")
         print("\n")
 
-manual_insert_articles()
-manual_insert_orders()
 
-selected_orders = tuple(map(int, input("Введите номера заказов через запятую (1, 2, 3...): ").split(", ")))
 
-sorted_by_shelf = sort_by_shelfs(selected_orders)
-print_shelfs(sorted_by_shelf)
+if __name__ == "__main__":
+    manual_insert_articles()
+    manual_insert_orders()
+    sorted_by_shelf = sort_by_shelfs(tuple(sys.argv[1:]))
+    print_shelfs(sorted_by_shelf)
