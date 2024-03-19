@@ -78,4 +78,5 @@ if __name__ == "__main__":
     manual_insert_articles()
     manual_insert_orders()
     sorted_by_shelf = sort_by_shelfs(tuple(sys.argv[1:]))
+    print(f"Страница сборки заказов {', '.join(sys.argv[1:])}")
     print_shelfs(sorted_by_shelf)
