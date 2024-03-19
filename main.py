@@ -69,8 +69,8 @@ def print_shelfs(dict):
             print(f"заказ {article['order_id']}, {article['amount']} шт")
             if article['opt_shelfs']:
                 print(f"доп стелаж: {article['opt_shelfs']}")
-            # print("\n")
-        print("\n")
+            print("\n")
+        # print("\n")
 
 
 
