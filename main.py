@@ -17,22 +17,25 @@ cur = connection.cursor(cursor_factory=extras.RealDictCursor)
 
 
 def manual_insert_articles():
-    for el in articles:
-        sql = """
-        INSERT INTO articles (id, name, main_shelf, opt_shelfs) 
-        VALUES (%(id)s, %(name)s, %(main_shelf)s, %(opt_shelfs)s)
-        """
-        cur.execute(sql, el)
+    sql = """
+            INSERT INTO articles (id, name, main_shelf, opt_shelfs) 
+            VALUES (%(id)s, %(name)s, %(main_shelf)s, %(opt_shelfs)s)
+            """
+    cur.executemany(sql, articles)
     connection.commit()
 
+
 def manual_insert_orders():
-    for el in orders:
-        sql = """
-        INSERT INTO orders (id, articles)
-        VALUES (%(id)s, %(articles)s)
-        """
-        cur.execute(sql, el)
+    sql = """
+            INSERT INTO orders (id, articles)
+            VALUES (%(id)s, %(articles)s)
+            """
+    cur.executemany(sql, orders)
     connection.commit()
+
+
+articles_cache = {}
+
 
 def sort_by_shelfs(orders_list):
     result = {}
@@ -40,8 +43,10 @@ def sort_by_shelfs(orders_list):
     orders = cur.fetchall()
     for order in orders:
         for article in order['articles']:
-            cur.execute(f"SELECT * FROM articles WHERE id = {article['id']}")
-            article_info = cur.fetchone()
+            if article['id'] not in articles_cache:
+                cur.execute(f"SELECT * FROM articles WHERE id = {article['id']}")
+                articles_cache[article['id']] = cur.fetchone()
+            article_info = articles_cache[article['id']]
 
             opt_shelfs = ""
             if article_info['opt_shelfs']:
@@ -61,6 +66,7 @@ def sort_by_shelfs(orders_list):
             )
     return result
 
+
 def print_shelfs(dict):
     for shelf in dict:
         print(f"===Стеллаж {shelf}")
@@ -73,10 +79,9 @@ def print_shelfs(dict):
         # print("\n")
 
 
-
 if __name__ == "__main__":
-    manual_insert_articles()
-    manual_insert_orders()
+    # manual_insert_articles()
+    # manual_insert_orders()
     sorted_by_shelf = sort_by_shelfs(tuple(sys.argv[1:]))
     print(f"Страница сборки заказов {', '.join(sys.argv[1:])}")
     print_shelfs(sorted_by_shelf)
