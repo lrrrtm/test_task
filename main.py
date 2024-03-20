@@ -1,4 +1,3 @@
-import json
 import sys
 
 from psycopg2 import extras
@@ -67,21 +66,20 @@ def sort_by_shelfs(orders_list):
     return result
 
 
-def print_shelfs(dict):
-    for shelf in dict:
+def print_shelfs(dictionary):
+    for shelf in dictionary:
         print(f"===Стеллаж {shelf}")
-        for article in dict[shelf]:
+        for article in dictionary[shelf]:
             print(f"{article['name']} (id={article['article_id']})")
             print(f"заказ {article['order_id']}, {article['amount']} шт")
             if article['opt_shelfs']:
                 print(f"доп стелаж: {article['opt_shelfs']}")
             print("\n")
-        # print("\n")
 
 
 if __name__ == "__main__":
-    # manual_insert_articles()
-    # manual_insert_orders()
+    manual_insert_articles()
+    manual_insert_orders()
     sorted_by_shelf = sort_by_shelfs(tuple(sys.argv[1:]))
     print(f"Страница сборки заказов {', '.join(sys.argv[1:])}")
     print_shelfs(sorted_by_shelf)
